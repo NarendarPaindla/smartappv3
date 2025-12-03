@@ -1,0 +1,14 @@
+PUT /profile called
+Request body: {"name":"Final User","email":"final@example.com","defaultCurrency":"EUR"}
+User ID: 69213a1599449c1b57700cfb
+User found: final@example.com
+User pre-save hook called
+Password not modified, skipping hash
+Error saving user: next is not a function
+TypeError: next is not a function
+    at model.<anonymous> (D:\NARENDAR_Desktop\Projects\Project_app\server\models\User.js:47:16)
+    at Kareem.execPre (D:\NARENDAR_Desktop\Projects\Project_app\server\node_modules\kareem\index.js:63:39)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async model.$__save (D:\NARENDAR_Desktop\Projects\Project_app\server\node_modules\mongoose\lib\model.js:369:5)
+    at async model.save (D:\NARENDAR_Desktop\Projects\Project_app\server\node_modules\mongoose\lib\model.js:609:5)
+    at async D:\NARENDAR_Desktop\Projects\Project_app\server\routes\authRoutes.js:116:33
