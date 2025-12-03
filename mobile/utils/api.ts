@@ -22,6 +22,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async (config) => {
+        console.log(`[API] Request: ${config.method?.toUpperCase()} ${config.url}`);
         const userStr = await getItem('user');
         if (userStr) {
             const user = JSON.parse(userStr);
@@ -37,13 +38,18 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        console.error('[API] Request Error:', error);
         return Promise.reject(error);
     }
 );
 
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        console.log(`[API] Response: ${response.status} ${response.config.url}`);
+        return response;
+    },
     async (error) => {
+        console.error('[API] Response Error:', error.response?.status, error.response?.data || error.message);
         if (error.response && error.response.status === 401) {
             await removeItem('user');
             await removeItem('token');

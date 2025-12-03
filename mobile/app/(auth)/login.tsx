@@ -16,6 +16,7 @@ export default function Login() {
     const router = useRouter();
 
     const handleLogin = async () => {
+        console.log('[LoginScreen] Login button pressed');
         if (!email || !password) {
             showToast('Please fill in all fields', 'error');
             return;
@@ -23,10 +24,13 @@ export default function Login() {
 
         setLoading(true);
         try {
+            console.log('[LoginScreen] Calling login()...');
             await login(email, password);
+            console.log('[LoginScreen] Login resolved, navigating...');
             showToast('Login successful!', 'success');
             router.replace('/(tabs)/dashboard');
         } catch (error: any) {
+            console.error('[LoginScreen] Login failed:', error);
             showToast(error.response?.data?.message || 'Login failed', 'error');
         } finally {
             setLoading(false);

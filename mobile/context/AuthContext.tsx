@@ -35,10 +35,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const login = async (email: string, password: string) => {
-        const { data } = await api.post('/auth/login', { email, password });
-        await setItem('user', JSON.stringify(data));
-        setUser(data);
-        return data;
+        console.log('[AuthContext] Attempting login for:', email);
+        try {
+            const { data } = await api.post('/auth/login', { email, password });
+            console.log('[AuthContext] Login successful, data received');
+            await setItem('user', JSON.stringify(data));
+            setUser(data);
+            return data;
+        } catch (error) {
+            console.error('[AuthContext] Login error:', error);
+            throw error;
+        }
     };
 
     const signup = async (userData: any) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://smartspendb.onrender.com/api', // Updated to match server port
+    baseURL: import.meta.env.VITE_BACKEND_URL, // Updated to match server port
 });
 
 // Add a request interceptor to add the auth token to every request
