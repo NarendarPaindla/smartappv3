@@ -32,14 +32,11 @@ export default function DailyEntry() {
 
     // Data State
     const [categories, setCategories] = useState<any[]>([]);
-    const [transactions, setTransactions] = useState<any[]>([]);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+
 
     useEffect(() => {
         fetchCategories();
-        fetchTransactions(page);
-    }, [page]);
+    }, []);
 
     // Clear category when type changes
     useEffect(() => {
@@ -55,16 +52,7 @@ export default function DailyEntry() {
         }
     };
 
-    const fetchTransactions = async (pageNum = 1) => {
-        try {
-            const { data } = await api.get(`/transactions?page=${pageNum}&limit=5`);
-            setTransactions(data.transactions);
-            setTotalPages(data.totalPages);
-            setPage(data.page);
-        } catch (error) {
-            console.error('Error fetching transactions', error);
-        }
-    };
+
 
     const handleAddCategory = async () => {
         if (!newCategoryName.trim()) return;
@@ -130,7 +118,6 @@ export default function DailyEntry() {
             setCategory('');
             setPaymentMethod('Cash');
             setDate(new Date());
-            fetchTransactions(page);
         } catch (error: any) {
             showToast(error.response?.data?.message || 'Failed to save transaction', 'error');
         } finally {
@@ -138,32 +125,7 @@ export default function DailyEntry() {
         }
     };
 
-    const handleEdit = (t: any) => {
-        setAmount(t.amount.toString());
-        setDescription(t.description || '');
-        setCategory(t.category);
-        setType(t.type);
-        setDate(new Date(t.date));
-        setPaymentMethod(t.paymentMethod || 'Cash');
-        setEditingId(t._id);
-    };
 
-    const handleDelete = (id: string) => {
-        Alert.alert('Delete Transaction', 'Are you sure?', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete', style: 'destructive', onPress: async () => {
-                    try {
-                        await api.delete(`/transactions/${id}`);
-                        showToast('Transaction deleted', 'success');
-                        fetchTransactions(page);
-                    } catch (error) {
-                        showToast('Failed to delete', 'error');
-                    }
-                }
-            }
-        ]);
-    };
 
     const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Bank Transfer'];
 
@@ -307,68 +269,7 @@ export default function DailyEntry() {
                     )}
                 </View>
 
-                {/* Recent Transactions */}
-                <View className="bg-gray-100/50 p-4 rounded-3xl -mx-4 px-8 pt-6 pb-20">
-                    <View className="flex-row justify-between items-center mb-4">
-                        <Text className="text-xl font-bold text-gray-900">Recent Transactions</Text>
-                        <View className="flex-row gap-2">
-                            <TouchableOpacity
-                                onPress={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="p-2 bg-white rounded-lg border border-gray-200 disabled:opacity-50"
-                            >
-                                <ChevronLeft size={20} color="#374151" />
-                            </TouchableOpacity>
-                            <View className="justify-center px-2">
-                                <Text className="text-gray-600 font-medium">{page} / {totalPages}</Text>
-                            </View>
-                            <TouchableOpacity
-                                onPress={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="p-2 bg-white rounded-lg border border-gray-200 disabled:opacity-50"
-                            >
-                                <ChevronRight size={20} color="#374151" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
 
-                    <View className="space-y-3">
-                        {transactions.map((t) => (
-                            <View key={t._id} className="bg-white p-4 rounded-xl flex-row justify-between items-center shadow-sm border border-gray-100">
-                                <View className="flex-row items-center flex-1">
-                                    <View className={`w-12 h-12 rounded-2xl items-center justify-center mr-4 ${t.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                                        {t.type === 'income' ? <TrendingUp size={24} color="#16A34A" /> : <TrendingDown size={24} color="#DC2626" />}
-                                    </View>
-                                    <View className="flex-1">
-                                        <Text className="font-bold text-gray-900 text-base">{t.category}</Text>
-                                        <Text className="text-gray-500 text-xs mt-1">
-                                            {format(new Date(t.date), 'MMM dd, hh:mm a')} • {t.paymentMethod}
-                                        </Text>
-                                        {t.description ? <Text className="text-gray-400 text-xs mt-0.5" numberOfLines={1}>{t.description}</Text> : null}
-                                    </View>
-                                </View>
-                                <View className="items-end">
-                                    <Text className={`font-bold text-lg mb-1 ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                        {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString()}
-                                    </Text>
-                                    <View className="flex-row gap-4 mt-1">
-                                        <TouchableOpacity onPress={() => handleEdit(t)} className="bg-gray-50 p-1.5 rounded-lg">
-                                            <Edit2 size={14} color="#6B7280" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => handleDelete(t._id)} className="bg-red-50 p-1.5 rounded-lg">
-                                            <Trash2 size={14} color="#EF4444" />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </View>
-                        ))}
-                        {transactions.length === 0 && (
-                            <View className="items-center justify-center py-10">
-                                <Text className="text-gray-400">No transactions found</Text>
-                            </View>
-                        )}
-                    </View>
-                </View>
             </ScrollView>
 
             {/* Category Modal */}

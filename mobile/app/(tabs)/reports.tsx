@@ -52,6 +52,7 @@ export default function Reports() {
     const fetchReport = async () => {
         setLoading(true);
         try {
+            console.log('[Reports] Fetching report with filters:', { startDate, endDate, type, category });
             const queryParams = new URLSearchParams({
                 startDate: startDate.toISOString().split('T')[0],
                 endDate: endDate.toISOString().split('T')[0],
@@ -65,7 +66,9 @@ export default function Reports() {
             setSummaryData(summary);
 
             // Fetch Transactions
+            console.log('[Reports] Fetching transactions...');
             const { data: txData } = await api.get(`/transactions?${queryParams}`);
+            console.log('[Reports] Transactions received:', txData.transactions?.length);
             setTransactions(txData.transactions);
 
             // Prepare Chart Data
@@ -138,21 +141,48 @@ export default function Reports() {
                                 <View className="flex-row bg-gray-50 rounded-lg p-1 border border-gray-200">
                                     <TouchableOpacity
                                         onPress={() => setType('')}
-                                        className={`flex-1 items-center py-1.5 rounded-md ${!type ? 'bg-white shadow-sm' : ''}`}
+                                        style={{
+                                            flex: 1,
+                                            alignItems: 'center',
+                                            paddingVertical: 6,
+                                            borderRadius: 6,
+                                            backgroundColor: !type ? '#FFFFFF' : 'transparent',
+                                            shadowOpacity: !type ? 0.1 : 0,
+                                            shadowRadius: 2,
+                                            elevation: !type ? 1 : 0,
+                                        }}
                                     >
-                                        <Text className={`text-xs font-medium ${!type ? 'text-gray-900' : 'text-gray-500'}`}>All</Text>
+                                        <Text style={{ fontSize: 12, fontWeight: '500', color: !type ? '#111827' : '#6B7280' }}>All</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setType('income')}
-                                        className={`flex-1 items-center py-1.5 rounded-md ${type === 'income' ? 'bg-white shadow-sm' : ''}`}
+                                        style={{
+                                            flex: 1,
+                                            alignItems: 'center',
+                                            paddingVertical: 6,
+                                            borderRadius: 6,
+                                            backgroundColor: type === 'income' ? '#FFFFFF' : 'transparent',
+                                            shadowOpacity: type === 'income' ? 0.1 : 0,
+                                            shadowRadius: 2,
+                                            elevation: type === 'income' ? 1 : 0,
+                                        }}
                                     >
-                                        <Text className={`text-xs font-medium ${type === 'income' ? 'text-green-600' : 'text-gray-500'}`}>Inc</Text>
+                                        <Text style={{ fontSize: 12, fontWeight: '500', color: type === 'income' ? '#16A34A' : '#6B7280' }}>Inc</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         onPress={() => setType('expense')}
-                                        className={`flex-1 items-center py-1.5 rounded-md ${type === 'expense' ? 'bg-white shadow-sm' : ''}`}
+                                        style={{
+                                            flex: 1,
+                                            alignItems: 'center',
+                                            paddingVertical: 6,
+                                            borderRadius: 6,
+                                            backgroundColor: type === 'expense' ? '#FFFFFF' : 'transparent',
+                                            shadowOpacity: type === 'expense' ? 0.1 : 0,
+                                            shadowRadius: 2,
+                                            elevation: type === 'expense' ? 1 : 0,
+                                        }}
                                     >
-                                        <Text className={`text-xs font-medium ${type === 'expense' ? 'text-red-600' : 'text-gray-500'}`}>Exp</Text>
+                                        <Text style={{ fontSize: 12, fontWeight: '500', color: type === 'expense' ? '#DC2626' : '#6B7280' }}>Exp</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -226,24 +256,36 @@ export default function Reports() {
                             <View className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                                 {transactions.length > 0 ? (
                                     transactions.map((t, index) => (
-                                        <View key={t._id} className={`p-4 flex-row items-center justify-between ${index !== transactions.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                                            <View className="flex-row items-center flex-1 gap-3">
-                                                <View className={`w-10 h-10 rounded-full items-center justify-center ${t.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
-                                                    {t.type === 'income' ? <ArrowUp size={20} color="#16A34A" /> : <ArrowDown size={20} color="#DC2626" />}
+                                        <View key={t._id} className={`p-4 ${index !== transactions.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                                            <View className="flex-row justify-between items-start mb-2">
+                                                <View className="flex-row items-center gap-2">
+                                                    <View className={`px-2 py-1 rounded-md ${t.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                                                        <Text className={`text-xs font-bold ${t.type === 'income' ? 'text-green-700' : 'text-red-700'}`}>
+                                                            {t.type.toUpperCase()}
+                                                        </Text>
+                                                    </View>
+                                                    <Text className="text-xs text-gray-500">{format(new Date(t.date), 'MMM dd, yyyy')}</Text>
                                                 </View>
-                                                <View className="flex-1">
-                                                    <Text className="font-bold text-gray-900 text-sm">{t.category}</Text>
-                                                    <Text className="text-xs text-gray-500 mt-0.5">
-                                                        {format(new Date(t.date), 'MMM dd, yyyy • hh:mm a')}
-                                                    </Text>
-                                                    {t.description ? <Text className="text-xs text-gray-400 mt-0.5" numberOfLines={1}>{t.description}</Text> : null}
-                                                </View>
-                                            </View>
-                                            <View className="items-end">
                                                 <Text className={`font-bold text-base ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                                     {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString()}
                                                 </Text>
-                                                <Text className="text-xs text-gray-400 mt-0.5">{t.paymentMethod}</Text>
+                                            </View>
+
+                                            <View className="flex-row justify-between items-center">
+                                                <View className="flex-1 mr-4">
+                                                    <Text className="font-bold text-gray-900 text-sm">{t.category}</Text>
+                                                    {t.description ? (
+                                                        <Text className="text-gray-500 text-xs mt-0.5" numberOfLines={2}>{t.description}</Text>
+                                                    ) : (
+                                                        <Text className="text-gray-400 text-xs mt-0.5 italic">No description</Text>
+                                                    )}
+                                                </View>
+                                                <View className="items-end">
+                                                    <View className="flex-row items-center gap-1 bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                                                        <CreditCard size={10} color="#6B7280" />
+                                                        <Text className="text-xs text-gray-600">{t.paymentMethod}</Text>
+                                                    </View>
+                                                </View>
                                             </View>
                                         </View>
                                     ))

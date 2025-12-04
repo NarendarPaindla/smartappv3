@@ -14,7 +14,9 @@ router.get('/', protect, async (req, res) => {
         let query = { user: req.user.id };
 
         if (startDate && endDate) {
-            query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            query.date = { $gte: new Date(startDate), $lte: end };
         }
 
         if (category) {
