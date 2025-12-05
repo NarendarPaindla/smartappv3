@@ -1,16 +1,18 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { LogOut, User, Bell, Shield, HelpCircle } from 'lucide-react-native';
 
 export default function Settings() {
+    const router = useRouter();
     const { user, logout } = useAuth();
 
     const menuItems = [
-        { icon: User, label: 'Profile', action: () => { } },
-        { icon: Bell, label: 'Notifications', action: () => { } },
-        { icon: Shield, label: 'Security', action: () => { } },
-        { icon: HelpCircle, label: 'Help & Support', action: () => { } },
+        { icon: User, label: 'Profile', action: () => router.push('/settings/profile') },
+        { icon: Bell, label: 'Notifications', action: () => router.push('/settings/notifications') },
+        { icon: Shield, label: 'Security', action: () => router.push('/settings/security') },
+        { icon: HelpCircle, label: 'Help & Support', action: () => router.push('/settings/help') },
     ];
 
     return (
