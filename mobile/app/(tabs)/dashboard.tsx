@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { ArrowUpRight, ArrowDownRight, Wallet, Calendar, PieChart as PieIcon, Calculator, BarChart3, TrendingUp, AlertTriangle } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LineChart, PieChart } from 'react-native-gifted-charts';
+import { formatCurrency } from '../../utils/currency';
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -90,15 +91,15 @@ export default function Dashboard() {
                         <Wallet color="white" size={20} />
                         <Text className="text-white ml-2 font-medium">Total Balance</Text>
                     </View>
-                    <Text className="text-white text-3xl font-bold mb-4">₹{summary?.netSavings?.toLocaleString() || '0'}</Text>
+                    <Text className="text-white text-3xl font-bold mb-4">{formatCurrency(summary?.netSavings || 0, user?.currency)}</Text>
                     <View className="flex-row gap-4">
                         <View className="flex-row items-center bg-blue-500/30 px-3 py-1.5 rounded-lg">
                             <ArrowDownRight color="#4ADE80" size={16} />
-                            <Text className="text-white ml-1 text-sm">Inc: ₹{summary?.totalIncome?.toLocaleString() || '0'}</Text>
+                            <Text className="text-white ml-1 text-sm">Inc: {formatCurrency(summary?.totalIncome || 0, user?.currency)}</Text>
                         </View>
                         <View className="flex-row items-center bg-blue-500/30 px-3 py-1.5 rounded-lg">
                             <ArrowUpRight color="#F87171" size={16} />
-                            <Text className="text-white ml-1 text-sm">Exp: ₹{summary?.totalExpense?.toLocaleString() || '0'}</Text>
+                            <Text className="text-white ml-1 text-sm">Exp: {formatCurrency(summary?.totalExpense || 0, user?.currency)}</Text>
                         </View>
                     </View>
                 </View>
@@ -180,7 +181,7 @@ export default function Dashboard() {
                         <View className="flex-1">
                             <Text className="font-medium text-gray-900">Highest Spending</Text>
                             <Text className="text-gray-600 mt-1">
-                                You spent most on <Text className="font-bold text-gray-900">{summary?.highestCategory?.name || 'N/A'}</Text> (₹{summary?.highestCategory?.value?.toLocaleString() || '0'}) this month.
+                                You spent most on <Text className="font-bold text-gray-900">{summary?.highestCategory?.name || 'N/A'}</Text> ({formatCurrency(summary?.highestCategory?.value || 0, user?.currency)}) this month.
                             </Text>
                         </View>
                     </View>
@@ -189,7 +190,7 @@ export default function Dashboard() {
                 {/* Overall Stats */}
                 <View className="bg-gray-900 p-5 rounded-2xl shadow-sm mb-6">
                     <Text className="text-gray-400 text-sm mb-1">Total Expense (All Time)</Text>
-                    <Text className="text-white text-2xl font-bold">₹{overallExpense.toLocaleString()}</Text>
+                    <Text className="text-white text-2xl font-bold">{formatCurrency(overallExpense, user?.currency)}</Text>
                 </View>
 
             </ScrollView>

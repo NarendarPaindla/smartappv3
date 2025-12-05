@@ -7,7 +7,8 @@ import { useToast } from '../../context/ToastContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { Filter, Calendar, ChevronDown, X, Search, ArrowUp, ArrowDown, CreditCard, ShoppingBag, Utensils, Plane, Car, Home, Smartphone, HeartPulse, MoreHorizontal } from 'lucide-react-native';
-import { clsx } from 'clsx';
+import { formatCurrency } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
 
 const getCategoryIcon = (name: string) => {
     const lowerName = name.toLowerCase();
@@ -22,6 +23,7 @@ const getCategoryIcon = (name: string) => {
 };
 
 export default function Reports() {
+    const { user } = useAuth();
     const insets = useSafeAreaInsets();
     const [chartData, setChartData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -295,16 +297,16 @@ export default function Reports() {
                             <View className="flex-row gap-3 mb-6">
                                 <View className="flex-1 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                                     <Text className="text-xs text-gray-500 mb-1">Income</Text>
-                                    <Text className="text-lg font-bold text-green-600">₹{summaryData.totalIncome.toLocaleString()}</Text>
+                                    <Text className="text-lg font-bold text-green-600">{formatCurrency(summaryData.totalIncome || 0, user?.currency)}</Text>
                                 </View>
                                 <View className="flex-1 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                                     <Text className="text-xs text-gray-500 mb-1">Expense</Text>
-                                    <Text className="text-lg font-bold text-red-600">₹{summaryData.totalExpense.toLocaleString()}</Text>
+                                    <Text className="text-lg font-bold text-red-600">{formatCurrency(summaryData.totalExpense || 0, user?.currency)}</Text>
                                 </View>
                                 <View className="flex-1 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                                     <Text className="text-xs text-gray-500 mb-1">Net</Text>
                                     <Text className={`text-lg font-bold ${summaryData.netResult >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                                        ₹{summaryData.netResult.toLocaleString()}
+                                        {formatCurrency(summaryData.netResult || 0, user?.currency)}
                                     </Text>
                                 </View>
                             </View>
@@ -356,7 +358,7 @@ export default function Reports() {
                                                         </View>
                                                     </View>
                                                     <Text className={`font-bold text-base ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString()}
+                                                        {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount || 0, user?.currency)}
                                                     </Text>
                                                 </View>
 

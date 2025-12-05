@@ -11,6 +11,7 @@ import { Input } from '../../components/ui/Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { clsx } from 'clsx';
+import { formatCurrency } from '../../utils/currency';
 
 export default function Loans() {
     const { user } = useAuth();
@@ -174,11 +175,11 @@ export default function Loans() {
                     <View className="flex-row gap-4 mb-6">
                         <View className="flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                             <Text className="text-gray-500 text-xs mb-1">Active Loans</Text>
-                            <Text className="text-xl font-bold text-yellow-600">₹{totalActive.toLocaleString()}</Text>
+                            <Text className="text-xl font-bold text-yellow-600">{formatCurrency(totalActive, user?.currency)}</Text>
                         </View>
                         <View className="flex-1 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                             <Text className="text-gray-500 text-xs mb-1">Interest</Text>
-                            <Text className="text-xl font-bold text-green-600">₹{totalInterest.toLocaleString()}</Text>
+                            <Text className="text-xl font-bold text-green-600">{formatCurrency(totalInterest, user?.currency)}</Text>
                         </View>
                     </View>
 
@@ -220,7 +221,7 @@ export default function Loans() {
                                     <Text className="text-gray-500 text-xs">Given: {format(new Date(loan.dateGiven), 'MMM dd, yyyy')}</Text>
                                 </View>
                                 <View className="items-end">
-                                    <Text className="text-lg font-bold text-gray-900">₹{loan.amount.toLocaleString()}</Text>
+                                    <Text className="text-lg font-bold text-gray-900">{formatCurrency(loan.amount, user?.currency)}</Text>
                                     <Text className="text-green-600 text-xs">+{loan.interestAmount || 0} Interest</Text>
                                 </View>
                             </View>
@@ -265,11 +266,11 @@ export default function Loans() {
                     </View>
                     <View className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
                         <Text className="text-gray-500 text-sm">Total Lent (All Time)</Text>
-                        <Text className="text-2xl font-bold text-gray-900">₹{(totalActive + totalPaid).toLocaleString()}</Text>
+                        <Text className="text-2xl font-bold text-gray-900">{formatCurrency(totalActive + totalPaid, user?.currency)}</Text>
                     </View>
                     <View className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <Text className="text-gray-500 text-sm">Total Returned</Text>
-                        <Text className="text-2xl font-bold text-green-600">₹{totalPaid.toLocaleString()}</Text>
+                        <Text className="text-2xl font-bold text-green-600">{formatCurrency(totalPaid, user?.currency)}</Text>
                     </View>
                 </ScrollView>
             )}

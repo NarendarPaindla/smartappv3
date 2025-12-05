@@ -8,9 +8,12 @@ import { Button } from '../../components/ui/Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { clsx } from 'clsx';
+import { getCurrencySymbol } from '../../utils/currency';
+import { useAuth } from '../../context/AuthContext';
 import { Plus, Trash2, Edit2, ChevronLeft, ChevronRight, X, Calendar, Clock, DollarSign, CreditCard, TrendingUp, TrendingDown } from 'lucide-react-native';
 
 export default function DailyEntry() {
+    const { user } = useAuth();
     const { showToast } = useToast();
     const insets = useSafeAreaInsets();
 
@@ -187,7 +190,7 @@ export default function DailyEntry() {
                         value={amount}
                         onChangeText={setAmount}
                         keyboardType="numeric"
-                        icon={<DollarSign size={20} color="#9CA3AF" />}
+                        icon={<Text className="text-gray-400 font-bold text-lg px-2">{getCurrencySymbol(user?.currency)}</Text>}
                     />
 
                     {/* Category Selector */}

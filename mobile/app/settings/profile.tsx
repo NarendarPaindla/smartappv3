@@ -21,20 +21,33 @@ const CURRENCIES = [
 ];
 
 export default function ProfileScreen() {
-    const { user } = useAuth();
+    const { user, updateUserProfile } = useAuth();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
-    const [phone, setPhone] = useState(user?.phone || ''); // Assuming user object has phone
-    const [currency, setCurrency] = useState('USD');
+    const [phone, setPhone] = useState(user?.phone || '');
+    const [currency, setCurrency] = useState(user?.currency || 'INR');
     const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            // Update user profile via context (which saves to storage)
+            // In a real app, this should also hit an API endpoint
+            await updateUserProfile({
+                ...user,
+                name,
+                email, // In a real app, changing email might require verification
+                phone,
+                currency
+            });
+
             Alert.alert('Success', 'Profile updated successfully');
-        }, 1500);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to update profile');
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
