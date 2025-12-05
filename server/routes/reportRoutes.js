@@ -25,6 +25,15 @@ router.get('/summary', protect, async (req, res) => {
         if (type) query.type = type;
         if (paymentMethod) query.paymentMethod = paymentMethod;
 
+        if (req.query.search) {
+            const searchRegex = new RegExp(req.query.search, 'i');
+            query.$or = [
+                { description: searchRegex },
+                { category: searchRegex },
+                { extractedMerchant: searchRegex }
+            ];
+        }
+
         const transactions = await Transaction.find(query);
 
         const totalIncome = transactions
@@ -63,6 +72,15 @@ router.get('/export/csv', protect, async (req, res) => {
     if (category) query.category = category;
     if (type) query.type = type;
     if (paymentMethod) query.paymentMethod = paymentMethod;
+
+    if (req.query.search) {
+        const searchRegex = new RegExp(req.query.search, 'i');
+        query.$or = [
+            { description: searchRegex },
+            { category: searchRegex },
+            { extractedMerchant: searchRegex }
+        ];
+    }
 
     const transactions = await Transaction.find(query).sort({ date: -1 });
 
