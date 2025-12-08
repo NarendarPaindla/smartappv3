@@ -20,7 +20,8 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
-            }
+            },
+            "package": "com.narendarpaindla.projectapp"
         },
         "web": {
             "bundler": "metro",
@@ -33,6 +34,12 @@
         ],
         "experiments": {
             "typedRoutes": true
+        },
+        "extra": {
+            "router": {},
+            "eas": {
+                "projectId": "91104227-f679-40d8-8fdf-0d3db85e2acb"
+            }
         }
     }
 }
