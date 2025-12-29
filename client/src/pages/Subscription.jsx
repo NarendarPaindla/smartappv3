@@ -12,16 +12,59 @@ const Subscription = () => {
     const handleSubscribe = async (plan) => {
         setLoading(true);
         try {
-            // Simulate payment delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // 1. Create Order
+            const { data: order } = await api.post('/payment/create-order', { plan });
 
-            const { data } = await api.post('/auth/subscribe', { plan });
-            updateUserProfile(data); // Update context with new subscription status
-            alert('Payment Successful! You now have full access.');
-            navigate('/');
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: order.currency,
+                name: "Smart Spend App",
+                description: `${plan === 'monthly' ? 'Monthly' : 'Annual'} Subscription`,
+                order_id: order.id,
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await api.post('/payment/verify-payment', {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            plan: plan
+                        });
+                        if (verifyRes.data.status === 'success') {
+                            alert('Payment Successful!');
+                            // Fetch fresh profile to update context
+                            try {
+                                const { data: profile } = await api.get('/auth/me');
+                                updateUserProfile(profile);
+                            } catch (e) {
+                                console.error('Failed to refresh profile', e);
+                            }
+                            navigate('/');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Payment verification failed');
+                    }
+                },
+                prefill: {
+                    name: user?.name,
+                    email: user?.email,
+                    contact: '' // Can be added if available in user object
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+
+            const rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                alert(response.error.description);
+            });
+            rzp1.open();
+
         } catch (error) {
             console.error('Subscription failed:', error);
-            alert('Payment failed. Please try again.');
+            alert('Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }

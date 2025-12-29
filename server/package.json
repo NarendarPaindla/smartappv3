@@ -24,6 +24,7 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-linkedin-oauth2": "^2.0.0",
+    "razorpay": "^2.9.6",
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {

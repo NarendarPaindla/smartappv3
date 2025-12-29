@@ -34,6 +34,7 @@ app.use('/api/receipts', require('./routes/receiptRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/loans', require('./routes/loanRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/payment', require('./routes/paymentRoutes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
